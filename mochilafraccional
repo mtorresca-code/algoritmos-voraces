@@ -1,0 +1,80 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+#include <iomanip>
+using namespace std;
+struct Objeto {
+    string nombre;
+    double valor;
+    double peso;
+    double ratio;
+    Objeto(string n, double v, double p) : nombre(n), valor(v), peso(p) {
+        ratio = (p > 0) ? (v / p) : 0.0;
+    }
+};
+bool compararPorRatio(const Objeto& a, const Objeto& b) {
+    return a.ratio > b.ratio;
+}
+void mochilaFraccional(double capacidad, vector<Objeto> objetos) {
+    sort(objetos.begin(), objetos.end(), compararPorRatio);
+    double valorTotal = 0.0;
+    double capacidadRestante = capacidad;
+    cout << "Objetos seleccionados:" << endl;
+    for (const auto& obj : objetos) {
+        if (capacidadRestante <= 0) {
+            break;
+        }
+        if (obj.peso <= capacidadRestante) {
+            capacidadRestante -= obj.peso;
+            valorTotal += obj.valor;
+            cout << "  - " << obj.nombre << " completo" << endl;
+        } else {
+            double fraccion = capacidadRestante / obj.peso;
+            valorTotal += obj.valor * fraccion;
+            cout << "  - " << capacidadRestante << "/" << obj.peso
+                 << " Parte del objeto " << obj.nombre << endl;
+            capacidadRestante = 0;
+        }
+    }
+    cout << fixed << setprecision(2);
+    cout << "Valor total obtenido: " << valorTotal << "\n" << endl;
+}
+int main() {
+    cout << "EJEMPLO 1: MOCHILA FRACCIONAL" << endl;
+    mochilaFraccional(50.0, {
+        Objeto("A", 60, 10),
+        Objeto("B", 100, 20),
+        Objeto("C", 120, 30)
+    });
+    cout << "EJEMPLO 2: MOCHILA FRACCIONAL" << endl;
+    mochilaFraccional(25.0, {
+        Objeto("A", 80, 20),
+        Objeto("B", 100, 10),
+        Objeto("C", 120, 30)
+    });
+    char opcion;
+    cout << "¿Desea probar con una entrada personalizada? : ";
+    cin >> opcion;
+    if (opcion == 's' || opcion == 'S') {
+        double capacidad;
+        int n;
+        cout << "Ingrese la capacidad maxima de la mochila: ";
+        cin >> capacidad;
+        cout << "Ingrese la cantidad de objetos: ";
+        cin >> n;
+        vector<Objeto> personalizados;
+        for (int i = 0; i < n; ++i) {
+            string nombre;
+            double valor, peso;
+            cout << "Objeto " << i + 1 << " (Nombre Valor Peso) ";
+            cin >> nombre >> valor >> peso;
+            if (peso > 0) {
+                personalizados.emplace_back(nombre, valor, peso);
+            }
+        }
+        cout << "\n RESULTADO PERSONALIZADO " << endl;
+        mochilaFraccional(capacidad, personalizados);
+    }
+    return 0;
+}
