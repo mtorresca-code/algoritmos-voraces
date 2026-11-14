@@ -1,0 +1,52 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+void coberturaAntenas(vector<int> casas, int radio) {
+    if (casas.empty()) {
+        cout << "No hay casas para cubrir.\n" << endl;
+        return;
+    }
+    sort(casas.begin(), casas.end());
+    casas.erase(unique(casas.begin(), casas.end()), casas.end());
+    vector<int> antenas;
+    int n = static_cast<int>(casas.size());
+    int i = 0;
+    while (i < n) {
+        int posicionAntena = casas[i] + radio;
+        antenas.push_back(posicionAntena);
+        int limiteDerecho = posicionAntena + radio;
+        while (i < n && casas[i] <= limiteDerecho) {
+            i++;
+        }
+    }
+    cout << "Antenas colocadas en:" << endl;
+    for (int pos : antenas) {
+        cout << "  - " << pos << endl;
+    }
+    cout << "Cantidad total: " << antenas.size() << "\n" << endl;
+}
+int main() {
+    cout << "EJEMPLO 1: COBERTURA DE ANTENAS" << endl;
+    coberturaAntenas({1, 2, 7, 11, 20, 21, 30}, 5);
+    cout << "EJEMPLO 2: COBERTURA DE ANTENAS" << endl;
+    coberturaAntenas({2, 4, 8, 15, 18, 22}, 3);
+    char opcion;
+    cout << "¿Desea probar con una entrada personalizada? (s/n): ";
+    cin >> opcion;
+    if (opcion == 's' || opcion == 'S') {
+        int n, radio;
+        cout << "Ingrese el radio de cobertura R: ";
+        cin >> radio;
+        cout << "Ingrese la cantidad de casas: ";
+        cin >> n;
+        vector<int> casasPersonalizadas(n);
+        cout << "Ingrese las posiciones de las casas separadas por espacio: ";
+        for (int i = 0; i < n; ++i) {
+            cin >> casasPersonalizadas[i];
+        }
+        cout << "\n RESULTADO PERSONALIZADO " << endl;
+        coberturaAntenas(casasPersonalizadas, radio);
+    }
+    return 0;
+}
